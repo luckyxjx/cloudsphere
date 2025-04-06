@@ -10,6 +10,7 @@ import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { SignInFlow } from "../types";
 import { useState } from "react";
+import axios from "axios";
 
 interface SignInCardProps{
     setState: (state: SignInFlow) => void;
@@ -18,6 +19,22 @@ interface SignInCardProps{
 export const SignInCard =({setState}:SignInCardProps)=>{
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
+
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+          const response = await axios.post("/api/user", {
+            email,
+            password,
+          });
+    
+          console.log("Logged in user:", response.data);
+        
+        } catch (err) {
+          console.error("Login error:", err);
+        }
+    }
     return(
         <Card className="w-full h-full p-8">
             <CardHeader className="px-0 pt-0">
