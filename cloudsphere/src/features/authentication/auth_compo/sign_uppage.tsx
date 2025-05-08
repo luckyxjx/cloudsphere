@@ -22,10 +22,10 @@ export const SignUpCard =({setState}:SignUpCardProps)=>{
     return(
         <Card className="w-full h-full p-8">
             <CardHeader className="px-0 pt-0">
-                <CardTitle>
-                    sign up in to continue
+                <CardTitle className="" style={{ fontFamily: "Great Vibes" }}>
+                    SignUp in to continue
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="" style={{ fontFamily: "Great Vibes" }}>
                     use email to continue
                 </CardDescription>
             </CardHeader>
@@ -68,7 +68,7 @@ export const SignUpCard =({setState}:SignUpCardProps)=>{
                         size="lg" 
                         className="w-full relative">
                         <FcGoogle className="size-5"/>
-                        Continue with google
+                        Continue with Google
                     </Button>
                     <Button disabled={false} 
                         onClick={()=>{}} 

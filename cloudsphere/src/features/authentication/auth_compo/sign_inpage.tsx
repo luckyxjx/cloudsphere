@@ -38,11 +38,11 @@ export const SignInCard =({setState}:SignInCardProps)=>{
     return(
         <Card className="w-full h-full p-8">
             <CardHeader className="px-0 pt-0">
-                <CardTitle>
-                    log in to continue
+                <CardTitle className="text-center text-5xl " style={{ fontFamily: "Great Vibes" }}>
+                    hello!
                 </CardTitle>
-                <CardDescription>
-                    use email to continue
+                <CardDescription className="text-center" style={{ fontFamily: "Great Vibes" }}>
+                    Use Email to Continue
                 </CardDescription>
             </CardHeader>
            
@@ -77,7 +77,7 @@ export const SignInCard =({setState}:SignInCardProps)=>{
                         size="lg" 
                         className="w-full relative">
                         <FcGoogle className="size-5"/>
-                        Continue with google
+                        Continue with Google
                     </Button>
                     <Button disabled={false} 
                         onClick={()=>{}} 
