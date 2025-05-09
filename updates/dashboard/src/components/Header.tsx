@@ -72,9 +72,9 @@ function Header({ activeNav, onLogout }: HeaderProps) {
             >
               <div className="flex items-center space-x-2">
                 <div className="h-8 w-8 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center justify-center text-white font-medium">
-                  {user?.name?.charAt(0).toUpperCase() || <UserIcon className="h-5 w-5" />}
+                  {user?.email?.charAt(0).toUpperCase() || <UserIcon className="h-5 w-5" />}
                 </div>
-                <span className="hidden md:block text-sm font-medium text-gray-700 dark:text-gray-200">{user?.name}</span>
+                <span className="hidden md:block text-sm font-medium text-gray-700 dark:text-gray-200">{user?.email}</span>
                 <ChevronDownIcon className={`h-4 w-4 text-gray-500 dark:text-gray-400 transition-transform duration-200 ${isProfileOpen ? 'transform rotate-180' : ''}`} />
               </div>
             </button>

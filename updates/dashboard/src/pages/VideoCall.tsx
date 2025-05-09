@@ -50,22 +50,94 @@ function VideoCall() {
   // Initialize local media stream
   useEffect(() => {
     if (isCallActive) {
-      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-        .then(stream => {
+      // Show loading state
+      const initializeMedia = async () => {
+        try {
+          // First check if we have permission
+          const permissions = await navigator.permissions.query({ name: 'camera' });
+          const audioPermissions = await navigator.permissions.query({ name: 'microphone' });
+
+          if (permissions.state === 'denied' || audioPermissions.state === 'denied') {
+            alert('Please enable camera and microphone access in your browser settings to use video calls.');
+            setIsCallActive(false);
+            return;
+          }
+
+          // Request media with specific constraints
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+              facingMode: 'user'
+            },
+            audio: {
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true
+            }
+          });
+
           if (localVideoRef.current) {
             localVideoRef.current.srcObject = stream;
             localStreamRef.current = stream;
           }
-        })
-        .catch(err => {
+        } catch (err) {
           console.error('Error accessing media devices:', err);
-        });
+          let errorMessage = 'Failed to access camera or microphone. ';
+          
+          if (err instanceof DOMException) {
+            switch (err.name) {
+              case 'NotFoundError':
+                errorMessage += 'No camera or microphone found.';
+                break;
+              case 'NotAllowedError':
+                errorMessage += 'Please allow camera and microphone access in your browser settings.';
+                break;
+              case 'NotReadableError':
+                errorMessage += 'Your camera or microphone is already in use by another application.';
+                break;
+              default:
+                errorMessage += err.message;
+            }
+          }
+          
+          alert(errorMessage);
+          setIsCallActive(false);
+        }
+      };
+
+      initializeMedia();
     }
 
     return () => {
-      localStreamRef.current?.getTracks().forEach(track => track.stop());
+      // Clean up media streams
+      if (localStreamRef.current) {
+        localStreamRef.current.getTracks().forEach(track => {
+          track.stop();
+        });
+        localStreamRef.current = undefined;
+      }
     };
   }, [isCallActive]);
+
+  // Add a function to check device availability
+  const checkDevices = async () => {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const hasVideo = devices.some(device => device.kind === 'videoinput');
+      const hasAudio = devices.some(device => device.kind === 'audioinput');
+
+      if (!hasVideo || !hasAudio) {
+        alert('Please connect a camera and microphone to use video calls.');
+        setIsCallActive(false);
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error('Error checking devices:', err);
+      return false;
+    }
+  };
 
   const handleUserConnected = (userId: string) => {
     console.log('User connected:', userId);
@@ -176,9 +248,13 @@ function VideoCall() {
     });
   };
 
-  const toggleCall = () => {
-    setIsCallActive(!isCallActive);
+  const toggleCall = async () => {
     if (!isCallActive) {
+      // Check devices before starting call
+      const devicesAvailable = await checkDevices();
+      if (!devicesAvailable) return;
+
+      setIsCallActive(true);
       // Generate a random room ID if not provided
       if (!roomId) {
         const newRoomId = Math.random().toString(36).substring(2, 8);
@@ -191,6 +267,7 @@ function VideoCall() {
       });
       peerConnectionsRef.current = {};
       setParticipants([]);
+      setIsCallActive(false);
     }
   };
 

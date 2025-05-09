@@ -5,9 +5,11 @@ import {
   Clock, 
   MessageSquare, 
   Users, 
-  Video
+  Video,
+  ChevronDown
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Event {
   _id: string;
@@ -42,6 +44,7 @@ function Dashboard() {
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [newEvent, setNewEvent] = useState({ title: '', time: '', duration: '' });
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  const [isActivityExpanded, setIsActivityExpanded] = useState(true);
 
   useEffect(() => {
     fetchEvents();
@@ -130,25 +133,57 @@ function Dashboard() {
               <Activity className="h-5 w-5 mr-2 text-blue-500" />
               Recent Activity
             </h3>
-            <button className="text-blue-500 text-sm">View All</button>
+            <div className="flex items-center space-x-2">
+              <button 
+                onClick={() => setIsActivityExpanded(!isActivityExpanded)}
+                className="text-blue-500 text-sm flex items-center hover:text-blue-600 transition-colors"
+              >
+                {isActivityExpanded ? 'Hide' : 'Show'} Activity
+                <ChevronDown 
+                  className={`h-4 w-4 ml-1 transition-transform duration-200 ${
+                    isActivityExpanded ? 'transform rotate-180' : ''
+                  }`}
+                />
+              </button>
+            </div>
           </div>
-          <div className="space-y-4">
-            {recentActivities.map((activity) => (
-              <div key={activity.id} className="flex border-b border-gray-100 dark:border-gray-700 pb-4">
-                <div className="bg-gray-100 dark:bg-gray-700 rounded-full h-10 w-10 flex items-center justify-center mr-3">
-                  {activity.user.charAt(0)}
+          
+          <AnimatePresence>
+            {isActivityExpanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="overflow-hidden"
+              >
+                <div className="space-y-4">
+                  {recentActivities.map((activity) => (
+                    <motion.div
+                      key={activity.id}
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={{ x: 20, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="flex border-b border-gray-100 dark:border-gray-700 pb-4 last:border-0"
+                    >
+                      <div className="bg-gray-100 dark:bg-gray-700 rounded-full h-10 w-10 flex items-center justify-center mr-3">
+                        {activity.user.charAt(0)}
+                      </div>
+                      <div>
+                        <p>
+                          <span className="font-medium">{activity.user}</span>{' '}
+                          <span className="text-gray-500 dark:text-gray-400">{activity.action}</span>{' '}
+                          <span className="font-medium">{activity.item}</span>
+                        </p>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</span>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
-                <div>
-                  <p>
-                    <span className="font-medium">{activity.user}</span>{' '}
-                    <span className="text-gray-500 dark:text-gray-400">{activity.action}</span>{' '}
-                    <span className="font-medium">{activity.item}</span>
-                  </p>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">{activity.time}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         
         {/* Upcoming Schedule */}

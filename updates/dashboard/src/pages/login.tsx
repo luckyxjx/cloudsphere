@@ -10,13 +10,44 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  const validateEmail = (email: string) => {
+    const domain = email.split('@')[1];
+    return domain === 'sphere.cs.in';
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+
+    // Validate email domain
+    if (!validateEmail(email)) {
+      setError('Please use your @sphere.cs.in email address');
+      return;
+    }
+
     try {
       await login(email, password);
       navigate('/');
     } catch (err) {
       setError('Invalid email or password');
+    }
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    
+    // Clear error when user starts typing
+    if (error) {
+      setError('');
+    }
+
+    // Show domain hint if user hasn't entered the correct domain
+    if (newEmail && !newEmail.endsWith('@sphere.cs.in')) {
+      const domain = newEmail.split('@')[1];
+      if (domain && domain !== 'sphere.cs.in') {
+        setError('Please use your @sphere.cs.in email address');
+      }
     }
   };
 
@@ -31,7 +62,7 @@ export default function Login() {
             Welcome to CloudSphere
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Sign in to your account to continue
+            Sign in with your sphere account
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -46,10 +77,14 @@ export default function Login() {
                 type="email"
                 autoComplete="email"
                 required
-                className="appearance-none relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 transition-colors"
-                placeholder="Enter your email"
+                className={`appearance-none relative block w-full px-4 py-3 border ${
+                  error && !validateEmail(email) 
+                    ? 'border-red-300 dark:border-red-500' 
+                    : 'border-gray-300 dark:border-gray-600'
+                } placeholder-gray-500 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 transition-colors`}
+                placeholder="username@sphere.cs.in"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleEmailChange}
               />
             </div>
             <div>
