@@ -1,0 +1,66 @@
+{
+  "name": "cloudsphere-dashboard",
+  "version": "1.0.0",
+  "description": "Enterprise-grade dashboard application with React frontend and Node.js backend",
+  "main": "server/src/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd updates/dashboard && npm run dev",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "cd updates/dashboard && npm run build",
+    "build:server": "cd server && npm run build",
+    "start": "cd server && npm start",
+    "start:prod": "cd server && npm run start:prod",
+    "install:all": "npm install && cd server && npm install && cd ../updates/dashboard && npm install",
+    "test": "npm run test:server && npm run test:client",
+    "test:server": "cd server && npm test",
+    "test:client": "cd updates/dashboard && npm test",
+    "lint": "npm run lint:server && npm run lint:client",
+    "lint:server": "cd server && npm run lint",
+    "lint:client": "cd updates/dashboard && npm run lint",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "deploy:staging": "npm run build && npm run deploy:staging:script",
+    "deploy:production": "npm run build && npm run deploy:production:script",
+    "desktop": "./desktop.sh",
+    "desktop:dev": "cd updates/dashboard && npm run electron:dev",
+    "desktop:build": "cd updates/dashboard && npm run electron:build",
+    "desktop:pack": "cd updates/dashboard && npm run electron:pack",
+    "desktop:dist": "cd updates/dashboard && npm run dist",
+    "desktop:dist:mac": "cd updates/dashboard && npm run dist:mac",
+    "desktop:dist:win": "cd updates/dashboard && npm run dist:win",
+    "desktop:dist:linux": "cd updates/dashboard && npm run dist:linux"
+  },
+  "keywords": [
+    "dashboard",
+    "react",
+    "nodejs",
+    "mongodb",
+    "enterprise",
+    "kanban",
+    "cloudsphere",
+    "desktop",
+    "electron"
+  ],
+  "author": "CloudSphere Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-org/cloudsphere-dashboard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/cloudsphere-dashboard/issues"
+  },
+  "homepage": "https://github.com/your-org/cloudsphere-dashboard#readme"
+}

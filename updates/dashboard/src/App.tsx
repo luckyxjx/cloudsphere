@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './components/context/ThemeContext';
 import { AuthProvider, useAuth } from './components/context/AuuthContext';
 import AppLayout from './components/context/layouts/AppLayout';
+import TitleBar from './components/TitleBar';
 import Dashboard from './pages/Dashboard';
 import KanbanBoard from './pages/KanbanBoard';
 import ChatApp from './pages/ChatApp';
@@ -65,11 +66,24 @@ function AppRoutes() {
 }
 
 function App() {
+  const [shouldOffsetForTitleBar, setShouldOffsetForTitleBar] = useState(false);
+
+  useEffect(() => {
+    const api = (window as any).electronAPI;
+    const isElectron = !!api;
+    const isMac = Boolean(api?.isMac);
+    // Offset only when Electron and not macOS (custom title bar visible)
+    setShouldOffsetForTitleBar(isElectron && !isMac);
+  }, []);
+
   return (
     <Router>
       <AuthProvider>
         <ThemeProvider>
-          <AppRoutes />
+          <TitleBar />
+          <div className={shouldOffsetForTitleBar ? 'pt-12' : ''}>
+            <AppRoutes />
+          </div>
         </ThemeProvider>
       </AuthProvider>
     </Router>
